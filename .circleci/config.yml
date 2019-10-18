@@ -1,22 +1,26 @@
 version: 2
 jobs:
   build:
-    docker:
-      - image: circleci/python:3.5.4
+    macos:
+      - xcode: 10.2.1
 
     steps:
       - checkout
 
       - run:
-          name: Push code to repo
-          command: echo Hello, world.
+          name: Set up config
+          command: source ./scripts/config_update_formula.sh
 
       - run:
-          name: Print the Current Time
-          command: date
+          name: Test new formula
+          command: source ./scripts/test_release_formula.sh
+
+      - run:
+          name: Upgrade formula
+          command: source ./scripts/upgrade_formula.sh
       
       - deploy:
-          name: Trigger github push
+          name: Trigger github release
           command: |
             git config credential.helper 'cache --timeout=120'
             git config user.email "kernlee23@gmail.com"
